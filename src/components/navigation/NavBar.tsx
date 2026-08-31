@@ -57,6 +57,12 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
               className="w-7 h-7 animate-pulse"
               src={image}
               alt={`${appName} Logo`}
+                onError={(e) => {
+                e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
+  
+
             />
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {appName}

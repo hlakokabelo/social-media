@@ -81,6 +81,10 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
                 <img
                   src={data.avatar_url}
                   alt={data.username}
+                    onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
                   className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-700 hover:ring-slate-500 transition-all"
                 />
               </Link>
@@ -139,6 +143,10 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
                     <img
                       src={data.image_url}
                       alt={data.title}
+                        onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
                       className="w-full h-auto max-h-[32rem] object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
                     />
                   </div>

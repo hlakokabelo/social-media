@@ -29,6 +29,10 @@ const MobileMenu: React.FunctionComponent<IMobileMenuProps> = ({ items }) => {
                       src={userProfile.avatar_url}
                       className="w-10 h-10 rounded-full object-cover border-2 border-blue-400/50"
                       alt="User Avatar"
+                        onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">

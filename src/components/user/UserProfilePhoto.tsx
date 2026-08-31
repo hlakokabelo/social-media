@@ -43,6 +43,10 @@ const UserProfilePhoto: React.FunctionComponent<IUserProfilePhotoProps> = ({
           src={userProfile.avatar_url}
           className={`${sizeClasses[size]} rounded-full object-cover border-2 border-transparent group-hover:border-blue-400 transition-all duration-300`}
           alt="user Avatar"
+            onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
         />
       ) : (
         <div className={`${sizeClasses[size]} rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold group-hover:scale-105 transition-transform duration-300`}>

@@ -133,6 +133,10 @@ const PublicProfilePage = () => {
                     src={profile.avatar_url}
                     className="w-28 h-28 rounded-full object-cover border-4 border-purple-500 cursor-zoom-in transition-transform duration-300 hover:scale-[1.03]"
                     alt={`${profile.username} avatar`}
+                      onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
                   />
                 </PhotoView>
               </PhotoProvider>

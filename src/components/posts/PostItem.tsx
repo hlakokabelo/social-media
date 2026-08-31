@@ -29,6 +29,10 @@ const PostItem: React.FunctionComponent<IPostItemProps> = ({
               <img
                 src={post.avatar_url}
                 alt={post.username}
+                  onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
                 className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-700 hover:ring-slate-500 transition-all"
               />
             </Link>
@@ -86,6 +90,10 @@ const PostItem: React.FunctionComponent<IPostItemProps> = ({
   <img
     src={post.image_url}
     alt={post.title}
+      onError={(e) => {
+    e.currentTarget.src = "/images/image-fallback.jpg";
+  }}
+
     className="w-full max-h-[80vh] object-contain mx-auto"
   />
 </div>
