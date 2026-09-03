@@ -26,6 +26,18 @@
   }
 }
 
+.scrollbar-small::-webkit-scrollbar {
+  height: 4px;
+}
+
+.scrollbar-small::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+}
+
+.scrollbar-small::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(20px);

@@ -9,39 +9,42 @@ import toast from "react-hot-toast";
 
 interface ICreatePostProps {}
 let postId: number = 0;
+
 interface IPostInput {
   title: string;
   content: string;
-  imageFile: File | null;
+  imageFiles: File[];
   avatar_url: string | null;
   community_id?: number | null;
   user_id?: string | null;
 }
+
 const createPost = async (post: IPostInput) => {
-  //uploade image
-  const { imageFile } = post;
-  let image_url: string | null = "";
-  if (imageFile) {
-    const filePath = `${post.title}--${Date.now()}--${imageFile.name}`;
+  const image_urls: string[] = [];
+
+  for (const imageFile of post.imageFiles) {
+    const filePath = `${crypto.randomUUID()}-${imageFile.name}`;
+
     const { error: uploadError } = await supabase.storage
       .from("post-images")
       .upload(filePath, imageFile);
 
-    if (uploadError) return new Error(uploadError.message);
+    if (uploadError) {
+      throw new Error(uploadError.message);
+    }
 
-    //get imageUrl
-    const { data: ImageData } = await supabase.storage
+    const { data: imageData } = supabase.storage
       .from("post-images")
       .getPublicUrl(filePath);
-    image_url = ImageData.publicUrl;
-  }
-  //upload post
-  if (image_url === "") image_url = null;
 
-  const { imageFile: _, ...payloadVariables } = post;
-  let payload = {
+    image_urls.push(imageData.publicUrl);
+  }
+
+  const { imageFiles: _, ...payloadVariables } = post;
+
+  const payload = {
     ...payloadVariables,
-    image_url: image_url,
+    image_urls,
   };
 
   const { data, error } = await supabase
@@ -50,7 +53,10 @@ const createPost = async (post: IPostInput) => {
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    throw new Error(error.message);
+  }
+
   postId = data.id;
   return data;
 };
@@ -65,14 +71,15 @@ const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
   const { user } = useAuth();
   const [title, setTitle] = React.useState<string>("");
   const [content, setContent] = React.useState<string>("");
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = React.useState<File[]>([]);
 
   const navigate = useNavigate();
   const clearForm = (): void => {
     setTitle("");
     setContent("");
-    setSelectedFile(null);
+    setSelectedFiles([]);
   };
+
   /** Community functionality*/
   const [communityId, setCommunityId] = React.useState<number | null>(null);
 
@@ -95,24 +102,24 @@ const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-    }
+    const files = Array.from(e.target.files ?? []);
+    setSelectedFiles(files);
   };
 
-  const handleSubmit = (event: React.SubmitEvent) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!user) return toast.error("Log in to create post");
 
     return mutate({
       title,
       content,
-      imageFile: selectedFile,
+      imageFiles: selectedFiles,
       avatar_url: user?.user_metadata.avatar_url || null,
       community_id: communityId,
       user_id: user.id,
     });
   };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -151,7 +158,6 @@ const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
           rows={5}
           disabled={!user}
           value={content}
-          required
           className="w-full rounded-lg bg-slate-700 border border-white/10 px-4 py-2 
       focus:outline-none focus:ring-2 focus:ring-purple-500 transition resize-none"
           onChange={(e) => setContent(e.target.value)}
@@ -228,6 +234,7 @@ const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
           disabled={!user}
           type="file"
           accept="image/*"
+          multiple
           className="w-full rounded-lg bg-slate-700 border border-white/10 px-4 py-2 
       file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
       file:bg-cyan-700 file:text-white hover:file:bg-cyan-500 disabled:cursor-not-allowed

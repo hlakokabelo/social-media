@@ -131,29 +131,46 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
             {data?.title}
           </h2>
 
-          {/* Image */}
-          {data?.image_url && (
-            <div className="block mb-4">
-              <PhotoProvider
-                maskOpacity={0.9}
-                speed={() => 300}
-              >
-                <PhotoView src={data.image_url}>
-                  <div className="rounded-xl overflow-hidden bg-black cursor-zoom-in select-none">
-                    <img
-                      src={data.image_url}
-                      alt={data.title}
-                        onError={(e) => {
-    e.currentTarget.src = "/images/image-fallback.jpg";
-  }}
-
-                      className="w-full h-auto max-h-[32rem] object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
-                    />
-                  </div>
-                </PhotoView>
-              </PhotoProvider>
+      {/* Image */}
+{data?.image_urls&&data?.image_urls?.length > 0 && (
+  <div className="block mb-4">
+    <PhotoProvider maskOpacity={0.9} speed={() => 300}>
+     <div
+  className={
+    data.image_urls.length > 2
+      ? "flex gap-2 overflow-x-auto scrollbar-small"
+      : "block"
+  }
+>
+        {data.image_urls.map((imageUrl, index) => (
+          <PhotoView key={imageUrl} src={imageUrl}>
+            <div
+              className={
+                data.image_urls.length > 2
+                  ? "shrink-0 w-64 rounded-xl overflow-hidden bg-black cursor-zoom-in"
+                  : "rounded-xl overflow-hidden bg-black cursor-zoom-in select-none"
+              }
+            >
+              <img
+                src={imageUrl}
+                alt={`${data.title} - Image ${index + 1}`}
+                onError={(e) => {
+                  e.currentTarget.src = "/images/image-fallback.jpg";
+                }}
+                className={
+                  data.image_urls.length > 2
+                    ? "w-full h-64 object-cover"
+                    : "w-full h-auto max-h-[32rem] object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
+                }
+              />
             </div>
-          )}
+          </PhotoView>
+        ))}
+      </div>
+    </PhotoProvider>
+  </div>
+)}
+
 
           {/* Content */}
           <p className="text-slate-300 leading-relaxed mb-6 whitespace-pre-wrap">

@@ -3,6 +3,7 @@ import { FaGithub, FaGoogle } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router";
 import { ROUTES } from "../../utils/routes";
+import { manageOAuthErrors } from "../../utils/manageAuthErrors";
 
 export default function SignUpPage() {
   const [email, setEmail] = useState<string>("");
@@ -17,7 +18,7 @@ export default function SignUpPage() {
     e.preventDefault();
 
     const { error } = await signUpWithEmail(email, password);
-    if (error) return setErrorMessage(String(error));
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     else navigate(ROUTES.HOME);
   };
 
@@ -27,7 +28,7 @@ export default function SignUpPage() {
 
     const { error } = await signInWithGitHub();
 
-    if (error) throw new Error(error);
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     else navigate(ROUTES.HOME);
   };
   const signUpWithGitHub = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,9 +36,10 @@ export default function SignUpPage() {
 
     const { error } = await signInWithGitHub();
 
-    if (error) return setErrorMessage(error);
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     else navigate(ROUTES.HOME);
   };
+
 
   return (
     <div className="flex items-center justify-center px-4">

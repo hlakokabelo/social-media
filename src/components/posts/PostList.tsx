@@ -13,6 +13,7 @@ export interface IPost {
   title: string;
   content: string;
   image_url: string;
+   image_urls: string[];
   avatar_url: string | null;
   created_at: string;
   comment_count?: number;

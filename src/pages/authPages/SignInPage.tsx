@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router";
 import { FaGithub, FaGoogle } from "react-icons/fa";
 import { ROUTES } from "../../utils/routes";
+import { manageOAuthErrors } from "../../utils/manageAuthErrors";
 
 export default function SignInPage() {
   const [email, setEmail] = useState<string>("");
@@ -10,21 +11,24 @@ export default function SignInPage() {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { signInWithGitHub, signInWithGoogle, signInWithEmail } = useAuth();
+  const [isSigningIn,setIsSigningIn]= useState<boolean>(false);
 
   const navigate = useNavigate();
   const onSubmitForm = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSigningIn(true)
 
     const { error } = await signInWithEmail(email, password);
-    if (error) return setErrorMessage(error);
+   setIsSigningIn(false)
+
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     navigate(ROUTES.HOME);
   };
 
   const signUpWithGoogle = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const { error } = await signInWithGoogle();
-
-    if (error) return setErrorMessage(error);
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     navigate(ROUTES.HOME);
   };
   const signUpWithGitHub = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -32,7 +36,7 @@ export default function SignInPage() {
 
     const { error } = await signInWithGitHub();
 
-    if (error) return setErrorMessage(error);
+    if (error) return setErrorMessage(manageOAuthErrors(error.message));
     navigate(ROUTES.HOME);
   };
   return (
@@ -83,13 +87,20 @@ export default function SignInPage() {
               placeholder="••••••••"
             />
           </div>
-
-          <button
-            type="submit"
-            className="w-full cursor-pointer bg-indigo-600 hover:bg-indigo-700 transition-colors text-white py-2 rounded-lg font-medium"
-          >
-            Sign In
-          </button>
+<button
+  type="submit"
+  disabled={isSigningIn}
+  className={`w-full py-2 rounded-lg font-medium text-white transition-colors flex items-center justify-center gap-2 ${
+    isSigningIn
+      ? "bg-indigo-400 cursor-not-allowed"
+      : "bg-indigo-600 hover:bg-indigo-700 cursor-pointer"
+  }`}
+>
+  {isSigningIn && (
+    <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+  )}
+  {isSigningIn ? "Signing in..." : "Sign In"}
+</button>
         </form>
 
         <div className="text-sm text-zinc-400 mt-6 text-center">
