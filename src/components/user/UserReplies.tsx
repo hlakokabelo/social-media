@@ -68,5 +68,4 @@ const UserReplies: React.FC<Props> = ({ userId }) => {
     </div>
   );
 };
-
 export default UserReplies;
