@@ -6,11 +6,14 @@ import image from "../../assets/icon3.svg";
 import { ROUTES } from "../../utils/routes";
 import MobileMenu from "./MobileMenu";
 import { appName } from "../../utils/appName";
+import SearchBar from "./SearchBar";
 
 interface INavBarProps {}
 
 const NavBar: React.FunctionComponent<INavBarProps> = () => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
+    const windowLocation = window.location.toString()
+  
   const { user, signOut, userProfile } = useAuth();
 
   const navigate = useNavigate();
@@ -45,7 +48,8 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-40 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-gray-700/50 shadow-xl">
+     <div className="lg:h-auto h-25">
+       <nav className="lg:fixed h-18 top-0 w-full z-40 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-gray-700/50 shadow-xl">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -60,9 +64,6 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
                 onError={(e) => {
                 e.currentTarget.src = "/images/image-fallback.jpg";
   }}
-
-  
-
             />
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {appName}
@@ -76,6 +77,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
             <NavLink to={ROUTES.COMMUNITIES}>Communities</NavLink>
             <NavLink to={ROUTES.CREATE_COMMUNITY}>Create Community</NavLink>
           </div>
+
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center">
@@ -149,7 +151,12 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
       <MobileMenu
         items={{ mobileMenuClick, goToUrl, menuOpen, user, userProfile }}
       />
+
+{(windowLocation.includes('search')||windowLocation.endsWith('/'))&&<div className="mt-3 flex justify-center"> <SearchBar/></div>}
+
     </nav>
+     </div>
+    
   );
 };
 export default NavBar;

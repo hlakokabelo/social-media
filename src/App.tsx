@@ -15,10 +15,11 @@ import { ROUTES } from "./utils/routes";
 import { Footer } from "./components/Footer";
 import PublicProfilePage from "./pages/users/PublicProfilePage";
 import { Toaster } from "react-hot-toast";
+import SearchPage from "./pages/SearchPage";
 
 const App = () => {
   return (
-    <div className="min-h-screen mt-10 bg-gray-950 text-gray-100">
+    <div className="min-h-screen lg:mt-10 bg-gray-950 text-gray-100">
       {/* Simple gradient background */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950"></div>
 
@@ -43,6 +44,7 @@ const App = () => {
             />
             <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
             <Route path="/post/:id/:slug?" element={<PostPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path={ROUTES.CREATE_POST} element={<CreatePostPage />} />
             <Route path="/user/:username" element={<PublicProfilePage />} />
             <Route path="/u/:username" element={<PublicProfilePage />} />
