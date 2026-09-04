@@ -6,7 +6,6 @@ import { useNavigate } from "react-router";
 const SearchBar = () => {
   const [search, setSearch] = React.useState("");
   const navigate = useNavigate();
-  const location = window.location.pathname
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
