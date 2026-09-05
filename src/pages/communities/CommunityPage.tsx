@@ -14,7 +14,7 @@ const CommunityPage: React.FunctionComponent<ICommunityPageProps> = () => {
   }, [location.pathname]);
   
   return (
-    <div className="grid justify-evenly gap-y-[4rem]">
+    <div className="grid justify-evenly gap-y-16">
       {id && (
         <CommunityDisplay communityId={Number(decodeId(id))} slug={slug} />
       )}

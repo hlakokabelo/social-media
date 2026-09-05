@@ -1,27 +1,46 @@
 import { supabase } from "../config/supabase-client";
 
-export const searchPosts = async (query: string,limit?:number) => {
+export interface SearchResult {
+  id: number|string;
+  type: "post" | "community" | "user";
+  title?: string;
+  content?: string;
+  name?: string;
+  username?: string;
+  avatar_url?: string;
+  created_at?: string;
+  community_name?: string;
+}
+
+export const searchPosts = async (
+  query: string,
+  limit?: number
+): Promise<SearchResult[]> => {
   const searchTerm = query.trim();
 
   if (!searchTerm) {
     return [];
   }
 
-  const { data, error } = await supabase
-    .from("posts")
-    .select(`*`)
-    .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.rpc("search_posts", {
+    search_query: searchTerm,
+    result_limit: limit ?? 2000,
+  });
 
   if (error) {
     console.error("Error searching posts:", error);
     throw error;
   }
 
-  return data;
+  return data.map((post: any) => ({
+    ...post,
+    type: "post" as const,
+  }))
 };
 
-export const searchCommunities = async (query: string) => {
+export const searchCommunities = async (
+  query: string
+): Promise<SearchResult[]> => {
   const searchTerm = query.trim();
 
   if (!searchTerm) {
@@ -30,7 +49,7 @@ export const searchCommunities = async (query: string) => {
 
   const { data, error } = await supabase
     .from("communities")
-    .select(`*`)
+    .select("*")
     .ilike("name", `%${searchTerm}%`)
     .order("name", { ascending: true });
 
@@ -39,10 +58,15 @@ export const searchCommunities = async (query: string) => {
     throw error;
   }
 
-  return data;
+  return data.map((community) => ({
+    ...community,
+    type: "community" as const,
+  }));
 };
 
-export const searchUsers = async (query: string) => {
+export const searchUsers = async (
+  query: string
+): Promise<SearchResult[]> => {
   const searchTerm = query.trim();
 
   if (!searchTerm) {
@@ -51,7 +75,7 @@ export const searchUsers = async (query: string) => {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select(`* `)
+    .select("*")
     .ilike("username", `%${searchTerm}%`)
     .order("username", { ascending: true });
 
@@ -60,5 +84,9 @@ export const searchUsers = async (query: string) => {
     throw error;
   }
 
-  return data;
+  return data.map((user) => ({
+    ...user,
+    type: "user" as const,
+  }));
 };
+

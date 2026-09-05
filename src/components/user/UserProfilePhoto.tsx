@@ -49,7 +49,7 @@ const UserProfilePhoto: React.FunctionComponent<IUserProfilePhotoProps> = ({
 
         />
       ) : (
-        <div className={`${sizeClasses[size]} rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold group-hover:scale-105 transition-transform duration-300`}>
+        <div className={`${sizeClasses[size]} rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold group-hover:scale-105 transition-transform duration-300`}>
           {userProfile?.username?.[0]?.toUpperCase() || 'U'}
         </div>
       )}

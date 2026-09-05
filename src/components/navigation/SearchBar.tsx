@@ -1,5 +1,3 @@
-// components/search/SearchBar.tsx
-
 import * as React from "react";
 import { useNavigate } from "react-router";
 

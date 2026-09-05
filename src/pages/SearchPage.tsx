@@ -2,68 +2,18 @@ import * as React from "react";
 import { Link } from "react-router";
 import { useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { searchCommunities, searchPosts, searchUsers } from "../services/search";
-
-
-interface SearchResult {
-  id: number;
-  type: "post" | "community" | "user";
-  title?: string;
-  content?: string;
-  name?: string;
-  username?: string;
-  avatar_url?: string;
-  created_at?: string;
-  community_name?: string;
-}
-
-// Mock data
-const mockResults: SearchResult[] = [
-  {
-    id: 1,
-    type: "post",
-    title: "Learning React and TypeScript",
-    content:
-      "I've been working on a React project recently and TypeScript has made things much easier to manage.",
-    username: "kabelo",
-    avatar_url: "https://i.pravatar.cc/100?img=12",
-    created_at: "2 hours ago",
-    community_name: "Programming",
-  },
-  {
-    id: 2,
-    type: "post",
-    title: "What is your favourite JavaScript framework?",
-    content:
-      "React, Vue, Angular or something else? What are you currently using?",
-    username: "devguy",
-    avatar_url: "https://i.pravatar.cc/100?img=5",
-    created_at: "5 hours ago",
-    community_name: "Web Development",
-  },
-  {
-    id: 3,
-    type: "community",
-    name: "Programming",
-    content: "A community for programmers and software developers.",
-  },
-  {
-    id: 4,
-    type: "community",
-    name: "Web Development",
-    content: "Discuss frontend, backend and full-stack web development.",
-  },
-  {
-    id: 5,
-    type: "user",
-    username: "kabelo",
-    name: "Kabelo Hlako",
-    avatar_url: "https://i.pravatar.cc/100?img=12",
-  },
-];
+import {
+  searchCommunities,
+  searchPosts,
+  searchUsers,
+  type SearchResult,
+} from "../services/search";
+import { routeBuilder } from "../utils/routes";
+import { formatTimeStamp } from "../utils/formatTimeStamp";
+import SearchLoading from "../components/skeleton/SearchLoading";
 
 const SearchPage = () => {
-  const [searchParams] =  useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const query = searchParams.get("q") || "";
 
@@ -71,47 +21,59 @@ const SearchPage = () => {
     "all" | "posts" | "communities" | "users"
   >("all");
 
-  const filteredResults = mockResults.filter((result) => {
-    if (activeTab === "posts") return result.type === "post";
-    if (activeTab === "communities") return result.type === "community";
-    if (activeTab === "users") return result.type === "user";
-
-    return true;
+  const { data: postsQuery, isLoading: postsQueryLoading } = useQuery({
+    queryKey: ["search-posts", query],
+    queryFn: () => searchPosts(query),
+    enabled: !!query,
   });
 
-  const {data:postsQuery} = useQuery({
-  queryKey: ["search-posts", query],
-  queryFn: () => searchPosts(query),
-  enabled: !!query,
-});
+  const { data: communitiesQuery, isLoading: communitiesQueryLoading } =
+    useQuery({
+      queryKey: ["search-communities", query],
+      queryFn: () => searchCommunities(query),
+      enabled: !!query,
+    });
 
-const {data:communitiesQuery} = useQuery({
-  queryKey: ["search-communities", query],
-  queryFn: () => searchCommunities(query),
-  enabled: !!query,
-});
+  const { data: usersQuery, isLoading: usersQueryLoading } = useQuery({
+    queryKey: ["search-users", query],
+    queryFn: () => searchUsers(query),
+    enabled: !!query,
+  });
 
-const {data:usersQuery} = useQuery({
-  queryKey: ["search-users", query],
-  queryFn: () => searchUsers(query),
-  enabled: !!query,
-});
+  const isLoading =
+    usersQueryLoading || communitiesQueryLoading || postsQueryLoading;
 
+  if (isLoading) return <SearchLoading />;
+
+  let postsResults: SearchResult[] = [];
+  let communitiesResults: SearchResult[] = [];
+  let usersResults: SearchResult[] = [];
+
+  if (activeTab === "all") {
+    postsResults = postsQuery?.slice(0, 5) ?? [];
+    communitiesResults = communitiesQuery?.slice(0, 5) ?? [];
+    usersResults = usersQuery?.slice(0, 5) ?? [];
+  } else if (activeTab === "posts") {
+    postsResults = postsQuery ?? [];
+  } else if (activeTab === "communities") {
+    communitiesResults = communitiesQuery ?? [];
+  } else if (activeTab === "users") {
+    usersResults = usersQuery ?? [];
+  }
+
+  const resultsLength =
+    postsResults.length + communitiesResults.length + usersResults.length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">
-          Search
-        </h1>
+        <h1 className="text-2xl font-bold text-white">Search</h1>
 
         {query ? (
           <p className="text-gray-400 mt-1">
             Results for{" "}
-            <span className="text-white font-medium">
-              "{query}"
-            </span>
+            <span className="text-white font-medium">"{query}"</span>
           </p>
         ) : (
           <p className="text-gray-400 mt-1">
@@ -131,9 +93,7 @@ const {data:usersQuery} = useQuery({
           <button
             key={tab.key}
             onClick={() =>
-              setActiveTab(
-                tab.key as "all" | "posts" | "communities" | "users"
-              )
+              setActiveTab(tab.key as "all" | "posts" | "communities" | "users")
             }
             className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
               activeTab === tab.key
@@ -155,68 +115,84 @@ const {data:usersQuery} = useQuery({
               Try searching for a post, community or user.
             </p>
           </div>
-        ) : filteredResults.length === 0 ? (
+        ) : resultsLength === 0 ? (
           <div className="text-center py-16 text-gray-500">
             <p className="text-lg">No results found</p>
-            <p className="text-sm mt-1">
-              Try a different search term.
-            </p>
+            <p className="text-sm mt-1">Try a different search term.</p>
           </div>
         ) : (
-          filteredResults.map((result) => {
-            {/* POST */}
-            if (result.type === "post") {
+          <>
+            {/* MORE POSTS */}
+            {activeTab === "all" && (
+              <div className="w-full py-3 text-white">Posts</div>
+            )}
+            {/* POSTS */}
+            {postsResults.map((post) => {
               return (
                 <Link
-                  key={`${result.type}-${result.id}`}
-                  to={""}
+                  key={`${post.type}-${post.id}`}
+                  to={routeBuilder.post(post.id as number, post.title)}
                   className="block p-4 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-800 transition"
                 >
                   <div className="flex items-center gap-3 mb-3">
                     <img
-                      src={result.avatar_url}
-                      alt={result.username}
+                      src={post.avatar_url}
+                      alt={post.username}
                       className="w-8 h-8 rounded-full"
                     />
 
                     <div className="text-sm">
-                      <span className="text-white">
-                        u/{result.username}
+                      <span className="text-white hover:text-blue-400">
+                        u/{post.username}
                       </span>
 
-                      <span className="text-gray-500 mx-2">
-                        •
-                      </span>
+                      <span className="text-gray-500 mx-2">•</span>
 
                       <span className="text-gray-500">
-                        {result.created_at}
+                        {formatTimeStamp(post.created_at!)}
                       </span>
                     </div>
                   </div>
 
                   <h2 className="text-lg font-semibold text-white mb-1">
-                    {result.title}
+                    {post.title}
                   </h2>
 
                   <p className="text-gray-400 text-sm line-clamp-2">
-                    {result.content}
+                    {post.content}
                   </p>
 
-                  {result.community_name && (
+                  {post.community_name && (
                     <p className="text-blue-400 text-xs mt-3">
-                      r/{result.community_name}
+                      r/{post.community_name}
                     </p>
                   )}
                 </Link>
               );
-            }
+            })}
 
-            {/* COMMUNITY */}
-            if (result.type === "community") {
+            {/* MORE POSTS */}
+            {activeTab === "all" && postsQuery && postsQuery.length > 5 && (
+              <button
+                onClick={() => setActiveTab("posts")}
+                className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
+              >
+                See more posts →
+              </button>
+            )}
+
+            {/* COMMUNITIES */}
+            {activeTab === "all" && (
+              <div className="w-full py-3 text-white">Communities</div>
+            )}
+            {communitiesResults.map((community) => {
               return (
                 <Link
-                  key={`${result.type}-${result.id}`}
-                  to="#"
+                  key={`${community.type}-${community.id}`}
+                  to={routeBuilder.community(
+                    community.id as number,
+                    community.name,
+                  )}
                   className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-800 transition"
                 >
                   <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-xl">
@@ -225,42 +201,65 @@ const {data:usersQuery} = useQuery({
 
                   <div>
                     <h2 className="text-white font-semibold">
-                      r/{result.name}
+                      r/{community.name}
                     </h2>
 
                     <p className="text-gray-400 text-sm mt-1">
-                      {result.content}
+                      {community.content}
                     </p>
                   </div>
                 </Link>
               );
-            }
+            })}
 
-            {/* USER */}
-            return (
-              <Link
-                key={`${result.type}-${result.id}`}
-                to="#"
-                className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-800 transition"
+            {/* MORE communities */}
+            {activeTab === "all" &&
+              communitiesQuery &&
+              communitiesQuery.length > 5 && (
+                <button
+                  onClick={() => setActiveTab("communities")}
+                  className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
+                >
+                  See more communities →
+                </button>
+              )}
+
+            {/* USERs */}
+            {activeTab === "all" && (
+              <div className="w-full py-3 text-white">Users</div>
+            )}
+            {usersResults.map((user) => {
+              return (
+                <Link
+                  key={`${user.type}-${user.id}`}
+                  to={routeBuilder.user(user.username)}
+                  className="flex items-center gap-4 p-4 rounded-xl bg-gray-800/60 border border-gray-700/50 hover:bg-gray-800 transition"
+                >
+                  <img
+                    src={user.avatar_url}
+                    alt={user.username}
+                    className="w-12 h-12 rounded-full"
+                  />
+
+                  <div>
+                    <h2 className="text-white font-semibold">{user.name}</h2>
+
+                    <p className="text-gray-400 text-sm">u/{user.username}</p>
+                  </div>
+                </Link>
+              );
+            })}
+
+            {/* MORE users */}
+            {activeTab === "all" && usersQuery && usersQuery?.length > 5 && (
+              <button
+                onClick={() => setActiveTab("users")}
+                className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
               >
-                <img
-                  src={result.avatar_url}
-                  alt={result.username}
-                  className="w-12 h-12 rounded-full"
-                />
-
-                <div>
-                  <h2 className="text-white font-semibold">
-                    {result.name}
-                  </h2>
-
-                  <p className="text-gray-400 text-sm">
-                    u/{result.username}
-                  </p>
-                </div>
-              </Link>
-            );
-          })
+                See more users →
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
