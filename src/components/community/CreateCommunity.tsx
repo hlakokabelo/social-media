@@ -31,7 +31,7 @@ const checkNameAvailability = async (name: string) => {
   const { data } = await supabase
     .from("communities")
     .select("name")
-    .eq("name", name)
+    .ilike("name", name)
     .maybeSingle();
 
   return !data;

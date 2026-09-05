@@ -98,7 +98,7 @@ const EditProfilePage: React.FunctionComponent<IEditProfilePageProps> = () => {
     const { data } = await supabase
       .from("profiles")
       .select("username")
-      .eq("username", name)
+      .ilike("username", name)
       .maybeSingle();
 
     return !data;
