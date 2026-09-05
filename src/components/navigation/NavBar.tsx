@@ -67,7 +67,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
   
 
             />
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {appName}
             </span>
           </Link>
@@ -97,7 +97,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
             ) : (
               <button
                 onClick={() => navigate(ROUTES.SIGN_IN)}
-                className="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 font-medium"
+                className="cursor-pointer bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 font-medium"
               >
                 Sign In
               </button>

@@ -175,7 +175,7 @@ const SearchPage = () => {
             {activeTab === "all" && postsQuery && postsQuery.length > 5 && (
               <button
                 onClick={() => setActiveTab("posts")}
-                className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
+                className="w-full py-3 cursor-pointer text-blue-400 hover:text-blue-300 transition"
               >
                 See more posts →
               </button>
@@ -218,7 +218,7 @@ const SearchPage = () => {
               communitiesQuery.length > 5 && (
                 <button
                   onClick={() => setActiveTab("communities")}
-                  className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
+                  className="w-full cursor-pointer py-3 text-blue-400 hover:text-blue-300 transition"
                 >
                   See more communities →
                 </button>
@@ -254,7 +254,7 @@ const SearchPage = () => {
             {activeTab === "all" && usersQuery && usersQuery?.length > 5 && (
               <button
                 onClick={() => setActiveTab("users")}
-                className="w-full py-3 text-blue-400 hover:text-blue-300 transition"
+                className="w-full cursor-pointer py-3 text-blue-400 hover:text-blue-300 transition"
               >
                 See more users →
               </button>
