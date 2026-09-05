@@ -16,7 +16,6 @@ import PublicProfileSkeleton from "../../components/Skeletons/PublicProfileSkele
 const PublicProfilePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { username } = useParams();
-
   const [profile, setProfile] = React.useState<IUserProfile | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [errorMessage, SetErrorMessage] = React.useState("");
@@ -46,7 +45,7 @@ const PublicProfilePage = () => {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("username", username)
+        .ilike("username", username!)
         .maybeSingle();
 
       if (error) {
