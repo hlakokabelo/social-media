@@ -2,7 +2,7 @@ import * as React from "react";
 import { Link } from "react-router";
 import { FiSearch } from "react-icons/fi";
 import { routeBuilder } from "../../utils/routes";
-import type { ICommunity, IMemberInfo } from "./CommunityList";
+import type { ICommunity, IMemberInfo } from "../../types/community";
 
 interface IMyCommunitiesProps {
   communities: ICommunity[];

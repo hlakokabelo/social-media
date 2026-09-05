@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Link } from "react-router";
 import { routeBuilder } from "../../utils/routes";
-import type { ICommunity } from "./CommunityList";
 import { FiSearch } from "react-icons/fi";
+import type { ICommunity } from "../../types/community";
 
 interface IDiscoverCommunitiesProps {
   communities: ICommunity[];

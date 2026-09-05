@@ -19,7 +19,7 @@ const MobileMenu: React.FunctionComponent<IMobileMenuProps> = ({ items }) => {
     <>
       {menuOpen && (
         <div className="md:hidden">
-          <div className="absolute right-2 top-16 w-72 bg-gradient-to-b from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700/50 overflow-hidden animate-slideDown">
+          <div className="z-100  absolute right-2 top-16 w-72 bg-linear-to-b from-gray-800 to-gray-900 rounded-xl shadow-2xl border border-gray-700/50 overflow-hidden animate-slideDown">
             {/* Mobile Menu Header with User Info */}
             {user && userProfile && (
               <div className="px-4 py-4 border-b border-gray-700/50">
@@ -35,7 +35,7 @@ const MobileMenu: React.FunctionComponent<IMobileMenuProps> = ({ items }) => {
 
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
                       {userProfile?.username?.[0]?.toUpperCase() || "U"}
                     </div>
                   )}

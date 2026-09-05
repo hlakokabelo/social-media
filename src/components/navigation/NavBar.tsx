@@ -6,6 +6,7 @@ import image from "../../assets/icon3.svg";
 import { ROUTES } from "../../utils/routes";
 import MobileMenu from "./MobileMenu";
 import { appName } from "../../utils/appName";
+import SearchBar from "./SearchBar";
 
 interface INavBarProps {}
 
@@ -14,6 +15,8 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
   const { user, signOut, userProfile } = useAuth();
 
   const navigate = useNavigate();
+  const windowLocation = window.location.toString()
+
   const goToUrl = (destination: string) => {
     setMenuOpen(false);
     navigate(destination);
@@ -45,7 +48,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
   };
 
   return (
-    <nav className="fixed top-0 w-full z-40 bg-gradient-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-gray-700/50 shadow-xl">
+    <nav className="fixed h-17 top-0 w-full z-40 bg-linear-to-r from-gray-900/95 to-gray-800/95 backdrop-blur-xl border-b border-gray-700/50 shadow-xl">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -64,7 +67,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
   
 
             />
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {appName}
             </span>
           </Link>
@@ -94,7 +97,7 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
             ) : (
               <button
                 onClick={() => navigate(ROUTES.SIGN_IN)}
-                className="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 font-medium"
+                className="cursor-pointer bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 font-medium"
               >
                 Sign In
               </button>
@@ -149,6 +152,9 @@ const NavBar: React.FunctionComponent<INavBarProps> = () => {
       <MobileMenu
         items={{ mobileMenuClick, goToUrl, menuOpen, user, userProfile }}
       />
+
+      {(windowLocation.includes('search')||windowLocation.endsWith('/'))&&<div className="mt-3 flex justify-center"> <SearchBar/></div>}
+
     </nav>
   );
 };

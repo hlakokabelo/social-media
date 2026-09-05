@@ -1,7 +1,5 @@
 import * as React from "react";
-import type { IPost } from "./PostList";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "../../config/supabase-client";
 import LikeButton from "../postsProperties/LikeButton";
 import CommentSection from "../postsProperties/CommentSection";
 import { formatTimeStamp } from "../../utils/formatTimeStamp";
@@ -13,26 +11,12 @@ import { routeBuilder, slugify } from "../../utils/routes";
 import { ShareBtn } from "./ShareBtn";
 
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import { fetchPostById, type IPostCommunity } from "../../services/posts";
 
 interface IPostDetailProps {
   postId: number;
   slug: string | undefined;
 }
-
-type IPostCommunity = IPost & {
-  community_name: string;
-  community_id: number;
-};
-
-const fetchPostById = async (id: number): Promise<IPostCommunity> => {
-  const { data, error } = await supabase.rpc("get_posts_with_post_id", {
-    p_post_id: id,
-  });
-
-  if (error) throw new Error(error.message);
-
-  return data[0] as IPostCommunity;
-};
 
 const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
   postId,
@@ -70,13 +54,13 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
     <div className="max-w-3xl mx-auto px-4 space-y-8">
       {/* Post Card */}
       <div className="w-full max-w-3xl mx-auto group">
-        <div className="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-sm p-6 transition-all duration-300">
+        <div className="rounded-2xl border border-slate-800 bg-linear-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-sm p-6 transition-all duration-300">
           {/* Header */}
           <div className="flex items-center gap-3 mb-4">
             {data?.avatar_url ? (
               <Link
                 to={routeBuilder.user(data.username)}
-                className="flex-shrink-0"
+                className="shrink-0"
               >
                 <img
                   src={data.avatar_url}
@@ -89,7 +73,7 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
                 />
               </Link>
             ) : (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700">
+              <div className="w-12 h-12 rounded-full bg-linear-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700">
                 <FaUser className="text-slate-300 text-lg" />
               </div>
             )}
@@ -160,7 +144,7 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
                 className={
                   data.image_urls.length > 2
                     ? "w-full h-64 object-cover"
-                    : "w-full h-auto max-h-[32rem] object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
+                    : "w-full h-auto max-h-128 object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
                 }
               />
             </div>

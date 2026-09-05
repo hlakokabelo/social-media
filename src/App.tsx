@@ -15,20 +15,26 @@ import { ROUTES } from "./utils/routes";
 import { Footer } from "./components/Footer";
 import PublicProfilePage from "./pages/users/PublicProfilePage";
 import { Toaster } from "react-hot-toast";
+import SearchPage from "./pages/SearchPage";
+
+
 
 const App = () => {
+    const windowLocation = window.location.toString()
+
   return (
-    <div className="min-h-screen mt-10 bg-gray-950 text-gray-100">
+    <div className={`min-h-screen ${  windowLocation.includes('search')||windowLocation.endsWith('/')
+?"mt-25":"mt-10"} bg-gray-950 text-gray-100`}>
       {/* Simple gradient background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950"></div>
+      <div className="fixed inset-0 bg-linear-to-br from-gray-950 via-gray-900 to-gray-950"></div>
 
       {/* Simple pattern overlay */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-800/20 via-transparent to-transparent"></div>
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-gray-800/20 via-transparent to-transparent"></div>
       <Toaster />
 
       <NavBar />
 
-      <main className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <main className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
         <div className="max-w-7xl mx-auto">
           <Routes>
             <Route path={ROUTES.HOME} element={<Home />} />
@@ -43,6 +49,7 @@ const App = () => {
             />
             <Route path={ROUTES.COMMUNITIES} element={<CommunitiesPage />} />
             <Route path="/post/:id/:slug?" element={<PostPage />} />
+            <Route path="/search" element={<SearchPage />} />
             <Route path={ROUTES.CREATE_POST} element={<CreatePostPage />} />
             <Route path="/user/:username" element={<PublicProfilePage />} />
             <Route path="/u/:username" element={<PublicProfilePage />} />
