@@ -19,6 +19,7 @@ The goal of the project is to demonstrate a full-stack social media architecture
 - Upvote / downvote posts
 - View user profiles
 - Community-specific feeds
+- Search posts, communities...
 - Global feed
 - Responsive UI
 
