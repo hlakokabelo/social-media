@@ -2,10 +2,11 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { supabase } from "../../config/supabase-client";
 import { useAuth } from "../../context/AuthContext";
-import { type IMemberInfo } from "../community/CommunityList";
 import { useNavigate } from "react-router";
 import { routeBuilder } from "../../utils/routes";
 import toast from "react-hot-toast";
+import type { ICommunity } from "../../types/community";
+import { fetchCommunities } from "../../services/community";
 
 interface ICreatePostProps {}
 let postId: number = 0;
@@ -61,12 +62,6 @@ const createPost = async (post: IPostInput) => {
   return data;
 };
 
-const getUserCommunities = async (): Promise<IMemberInfo[]> => {
-  const { error, data } = await supabase.rpc("get_user_communities");
-  if (error) throw new Error(error?.message);
-  return data as IMemberInfo[];
-};
-
 const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
   const { user } = useAuth();
   const [title, setTitle] = React.useState<string>("");
@@ -83,11 +78,18 @@ const CreatePost: React.FunctionComponent<ICreatePostProps> = () => {
   /** Community functionality*/
   const [communityId, setCommunityId] = React.useState<number | null>(null);
 
-  const { data: communities } = useQuery<IMemberInfo[], Error>({
+   const {
+      data: communities,
+    } = useQuery<ICommunity[], Error>({
+      queryKey: ["communities"],
+      queryFn: fetchCommunities,
+    });
+
+  /** 
+   *  const { data: myCommunities } = useQuery<IMemberInfo[], Error>({
     queryKey: ["memberInfo", user?.id],
     queryFn: getUserCommunities,
-  });
-
+  });*/
   const handleCommunityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setCommunityId(value ? Number(value) : null);

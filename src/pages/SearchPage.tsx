@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Link } from "react-router";
 import { useSearchParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { searchCommunities, searchPosts, searchUsers } from "../services/search";
 
 
 interface SearchResult {
@@ -76,6 +78,25 @@ const SearchPage = () => {
 
     return true;
   });
+
+  const {data:postsQuery} = useQuery({
+  queryKey: ["search-posts", query],
+  queryFn: () => searchPosts(query),
+  enabled: !!query,
+});
+
+const {data:communitiesQuery} = useQuery({
+  queryKey: ["search-communities", query],
+  queryFn: () => searchCommunities(query),
+  enabled: !!query,
+});
+
+const {data:usersQuery} = useQuery({
+  queryKey: ["search-users", query],
+  queryFn: () => searchUsers(query),
+  enabled: !!query,
+});
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">

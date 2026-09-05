@@ -1,5 +1,4 @@
 import * as React from "react";
-import { supabase } from "../../config/supabase-client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { IPost } from "../posts/PostList";
 import PostItem from "../posts/PostItem";
@@ -9,96 +8,19 @@ import { useNavigate } from "react-router";
 import { routeBuilder, slugify } from "../../utils/routes";
 import Loading from "../Loading";
 import { useAuth } from "../../context/AuthContext";
+import { checkMembership, fetchCommunityData, fetchCommunityPost, joinCommunity, leaveCommunity } from "../../services/community";
+import type { ICommunity } from "../../types/community";
 
 interface ICommunityDisplayProps {
   communityId: number;
   slug: string | undefined;
 }
 
-interface ICommunity {
-  name: string;
-  description: string;
-  created_at: string;
-  user_id: string;
-  creator: { username: string };
-  member_count: number;
-}
-
-interface PostWithCommunity extends IPost {
+export interface PostWithCommunity extends IPost {
   communities: {
     name: string;
   };
 }
-
-export const fetchCommunityData = async (
-  communityId: number,
-): Promise<ICommunity> => {
-  const { data, error } = await supabase
-    .rpc("community_with_creator", { p_community_id: communityId })
-    .single();
-
-  if (error) throw new Error(error.message);
-  return data as ICommunity;
-};
-
-export const fetchCommunityPost = async (
-  communityId: number,
-): Promise<PostWithCommunity[]> => {
-  const { data, error } = await supabase.rpc("get_posts_with_community_meta", {
-    p_community_id: communityId,
-  });
-
-  if (error) throw new Error(error.message);
-  return data as PostWithCommunity[];
-};
-
-const checkMembership = async (
-  communityId: number,
-  userId: string,
-): Promise<boolean> => {
-  const { data, error } = await supabase
-    .from("community_members")
-    .select("*")
-    .eq("community_id", communityId)
-    .eq("user_id", userId)
-    .single();
-
-  if (error && error.code !== "PGRST116") throw new Error(error.message);
-  return !!data;
-};
-
-const joinCommunity = async ({
-  communityId,
-  userId,
-}: {
-  communityId: number;
-  userId: string;
-}) => {
-  const { error } = await supabase.from("community_members").insert({
-    community_id: communityId,
-    user_id: userId,
-    role: "member",
-    joined_at: new Date().toISOString(),
-  });
-
-  if (error) throw new Error(error.message);
-};
-
-const leaveCommunity = async ({
-  communityId,
-  userId,
-}: {
-  communityId: number;
-  userId: string;
-}) => {
-  const { error } = await supabase
-    .from("community_members")
-    .delete()
-    .eq("community_id", communityId)
-    .eq("user_id", userId);
-
-  if (error) throw new Error(error.message);
-};
 
 const CommunityDisplay: React.FunctionComponent<ICommunityDisplayProps> = ({
   communityId,
@@ -277,12 +199,12 @@ const CommunityDisplay: React.FunctionComponent<ICommunityDisplayProps> = ({
               created by{" "}
               <button
                 onClick={() =>
-                  CommunityData?.creator.username &&
+                  CommunityData?.creator!.username &&
                   navigate(routeBuilder.user(CommunityData.creator.username))
                 }
                 className="text-slate-300 hover:text-emerald-400 transition-colors font-medium"
               >
-                u/{CommunityData?.creator.username}
+                u/{CommunityData?.creator!.username}
               </button>
             </span>
           </div>

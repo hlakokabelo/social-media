@@ -18,13 +18,13 @@ const PostItem: React.FunctionComponent<IPostItemProps> = ({
 }) => {
   return (
     <div className="w-full max-w-3xl mx-auto mb-6 group">
-      <div className="rounded-2xl border border-slate-800 bg-gradient-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-sm p-6 transition-all duration-300 ">
+      <div className="rounded-2xl border border-slate-800 bg-linear-to-br from-slate-900/95 to-slate-900/80 backdrop-blur-sm p-6 transition-all duration-300 ">
         {/* Header */}
         <div className="flex items-center gap-3 mb-4">
           {post.avatar_url ? (
             <Link
               to={routeBuilder.user(post.username)}
-              className="flex-shrink-0"
+              className="shrink-0"
             >
               <img
                 src={post.avatar_url}
@@ -37,7 +37,7 @@ const PostItem: React.FunctionComponent<IPostItemProps> = ({
               />
             </Link>
           ) : (
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700">
+            <div className="w-12 h-12 rounded-full bg-linear-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700">
               <FaUser className="text-slate-300 text-lg" />
             </div>
           )}

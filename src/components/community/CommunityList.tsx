@@ -1,82 +1,16 @@
 import * as React from "react";
-import { supabase } from "../../config/supabase-client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Loading from "../Loading";
 import { formatErrorMessage } from "../../utils/formatErrorMessage";
 import { useAuth } from "../../context/AuthContext";
 import DiscoverCommunities from "./DiscoverCommunities";
 import MyCommunities from "./MyCommunitiesDisplay";
+import { fetchCommunities, getUserCommunities, joinCommunity, leaveCommunity } from "../../services/community";
+import type { ICommunity, IMemberInfo } from "../../types/community";
 
 interface ICommunityListProps {}
 
-export interface ICommunity {
-  name: string;
-  description: string;
-  id: number;
-  created_at: string;
-}
-
-export interface IMemberInfo {
-  id: number;
-  joined_at: string;
-  name: string;
-  role: string;
-}
-
 type TabType = "my-communities" | "discover";
-
-const getUserCommunities = async (): Promise<IMemberInfo[]> => {
-  const { error, data } = await supabase.rpc("get_user_communities");
-  if (error) throw new Error(error?.message);
-  return data as IMemberInfo[];
-};
-
-export const fetchCommunities = async (): Promise<ICommunity[]> => {
-  const { data, error } = await supabase
-    .from("communities")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) throw new Error(error?.message);
-  return data as ICommunity[];
-};
-
-const joinCommunity = async ({
-  communityId,
-  userId,
-}: {
-  communityId: number;
-  userId: string;
-}) => {
-  const { error, status, data } = await supabase
-    .from("community_members")
-    .insert({
-      community_id: communityId,
-      user_id: userId,
-      role: "member",
-      joined_at: new Date().toISOString(),
-    });
-
-  console.log({ status, data });
-  if (error) throw new Error(error.message);
-};
-
-const leaveCommunity = async ({
-  communityId,
-  userId,
-}: {
-  communityId: number;
-  userId: string;
-}) => {
-  const { error, status, data } = await supabase
-    .from("community_members")
-    .delete()
-    .eq("community_id", communityId)
-    .eq("user_id", userId);
-
-  console.log({ status, data });
-  if (error) throw new Error(error.message);
-};
 
 const CommunityList: React.FunctionComponent<ICommunityListProps> = () => {
   const { user } = useAuth();
