@@ -7,11 +7,11 @@ import UserLikes from "../../components/user/UserLikes";
 import { MdEdit } from "react-icons/md";
 import { useAuth, type IUserProfile } from "../../context/AuthContext";
 import { ROUTES } from "../../utils/routes";
-import Loading from "../../components/Loading";
 import { formatErrorMessage } from "../../utils/formatErrorMessage";
 import { useEffect } from "react";
 
 import { PhotoProvider, PhotoView } from "react-photo-view";
+import PublicProfileSkeleton from "../../components/Skeletons/PublicProfileSkeleton";
 
 const PublicProfilePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,15 +68,9 @@ const PublicProfilePage = () => {
     fetchProfile();
   }, [username]);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center mt-12">
-        <div className="text-zinc-400">
-          <Loading />
-        </div>
-      </div>
-    );
-  }
+ if (loading) {
+  return <PublicProfileSkeleton />;
+}
 
   if (errorMessage) {
     return (

@@ -1,12 +1,12 @@
 import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Loading from "../Loading";
 import { formatErrorMessage } from "../../utils/formatErrorMessage";
 import { useAuth } from "../../context/AuthContext";
 import DiscoverCommunities from "./DiscoverCommunities";
 import MyCommunities from "./MyCommunitiesDisplay";
 import { fetchCommunities, getUserCommunities, joinCommunity, leaveCommunity } from "../../services/community";
 import type { ICommunity, IMemberInfo } from "../../types/community";
+import CommunityListSkeleton from "../Skeletons/CommunityListSkeleton";
 
 interface ICommunityListProps {}
 
@@ -18,20 +18,26 @@ const CommunityList: React.FunctionComponent<ICommunityListProps> = () => {
   const [activeTab, setActiveTab] = React.useState<TabType>("discover");
 
   const {
-    data: communities,
-    error,
-    isLoading,
-  } = useQuery<ICommunity[], Error>({
-    queryKey: ["communities"],
-    queryFn: fetchCommunities,
-  });
+  data: communities,
+  error,
+  isLoading: isLoadingCommunities,
+} = useQuery<ICommunity[], Error>({
+  queryKey: ["communities"],
+  queryFn: fetchCommunities,
+});
 
-  const { data: userCommunities } = useQuery<IMemberInfo[], Error>({
-    queryKey: ["memberInfo", user?.id],
-    queryFn: getUserCommunities,
-    enabled: !!user,
-  });
+const {
+  data: userCommunities,
+  isLoading: isLoadingUserCommunities,
+} = useQuery<IMemberInfo[], Error>({
+  queryKey: ["memberInfo", user?.id],
+  queryFn: getUserCommunities,
+  enabled: !!user,
+});
 
+const isLoading =
+  isLoadingCommunities || isLoadingUserCommunities;
+  
   const joinMutation = useMutation({
     mutationFn: joinCommunity,
     onSuccess: () => {
@@ -87,8 +93,7 @@ const CommunityList: React.FunctionComponent<ICommunityListProps> = () => {
     );
   }, [communities, userCommunities]);
 
-  if (isLoading) return <Loading />;
-
+if (isLoading) return <CommunityListSkeleton />;
   if (error) {
     return (
       <div className="text-center text-red-400">

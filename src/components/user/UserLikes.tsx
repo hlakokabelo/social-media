@@ -5,7 +5,7 @@ import { formatTimeStamp } from "../../utils/formatTimeStamp";
 import { Link } from "react-router";
 import type { IPost } from "../posts/PostList";
 import { routeBuilder } from "../../utils/routes";
-import Loading from "../Loading";
+import UserLikesSkeleton from "../Skeletons/UserLikesSkeleton";
 
 interface Props {
   userId: string;
@@ -46,7 +46,7 @@ const UserLikes: React.FC<Props> = ({ userId }) => {
     queryFn: () => fetchUserLikes(userId),
   });
 
-  if (isLoading) return <div className="text-zinc-400 mt-4"><Loading/></div>;
+if (isLoading) return <UserLikesSkeleton />;
   if (error) return <p className="text-red-400 mt-4">Error loading likes.</p>;
 
   if (!data?.length)
@@ -54,8 +54,8 @@ const UserLikes: React.FC<Props> = ({ userId }) => {
 
   return (
     <div className="flex flex-col gap-4 mt-4">
-      {data.map((like: IVotes, index: number) => (
-        <div key={index}>
+      {data.map((like: IVotes) => (
+        <div key={like.id}>
           <Link to={routeBuilder.post(like.posts.id, like.posts.title)}>
             <div className="cursor-pointer bg-zinc-900 border border-zinc-700 rounded-lg p-4 hover:border-green-600">
               <p className="text-white">{like.posts?.title}</p>

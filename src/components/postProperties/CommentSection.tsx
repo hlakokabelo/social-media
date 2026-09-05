@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../../config/supabase-client";
 import CommentItem from "./CommentItem";
-import Loading from "../Loading";
+import CommentSectionSkeleton from "../Skeletons/CommentSectionSkeleton";
 
 interface ICommentSectionProps {
   postId: number;
@@ -51,7 +51,9 @@ const fetchComments = async (postId: number): Promise<IComment[]> => {
     p_post_id: postId,
   });
 
-  if (error) console.error(error);
+  if (error) {
+  throw new Error(error.message);
+}
 
   return data as IComment[];
 };
@@ -134,10 +136,9 @@ const CommentSection: React.FunctionComponent<ICommentSectionProps> = ({
     return roots;
   };
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
+ if (isLoading) {
+  return <CommentSectionSkeleton />;
+}
   if (error) {
     return <div> Error: {error.message}</div>;
   }
@@ -190,8 +191,8 @@ const CommentSection: React.FunctionComponent<ICommentSectionProps> = ({
 
       {/* Comment List */}
       <div className="space-y-5">
-        {commentTree.map((comment_, key) => (
-          <CommentItem key={key} comment={comment_} postId={postId} />
+        {commentTree.map((comment) => (
+          <CommentItem key={comment.id} comment={comment} postId={postId} />
         ))}
       </div>
     </div>

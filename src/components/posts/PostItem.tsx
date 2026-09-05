@@ -5,7 +5,7 @@ import { formatTimeStamp } from "../../utils/formatTimeStamp";
 import { FaUser, FaComment } from "react-icons/fa";
 import { routeBuilder } from "../../utils/routes";
 import { ShareBtn } from "./ShareBtn";
-import LikeButton from "../postsProperties/LikeButton";
+import LikeButton from "../postProperties/LikeButton";
 
 interface IPostItemProps {
   post: IPost & { community_name?: string; community_id?: number };
@@ -37,8 +37,8 @@ const PostItem: React.FunctionComponent<IPostItemProps> = ({
               />
             </Link>
           ) : (
-            <div className="w-12 h-12 rounded-full bg-linear-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700">
-              <FaUser className="text-slate-300 text-lg" />
+            <div className="w-12 h-12 rounded-full bg-linear-to-br from-slate-700 to-slate-800 flex items-center justify-center ring-2 ring-slate-700"> 
+            <FaUser className="text-slate-300 text-lg" />
             </div>
           )}
 

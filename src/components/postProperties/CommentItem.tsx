@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { IComment } from "./CommentSection";
+import type { IComment } from "./CommentSection.tsx";
 import { useAuth } from "../../context/AuthContext.tsx";
 import toast from "react-hot-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -221,9 +221,13 @@ const handleReply = () => {
           </button>
           {isCollapsed && (
             <div className="space-y-3 pl-2">
-              {comment.children.map((childComment, key) => (
-                <CommentItem key={key} comment={childComment} postId={postId} />
-              ))}
+              {comment.children.map((childComment) => (
+  <CommentItem
+    key={childComment.id}
+    comment={childComment}
+    postId={postId}
+  />
+))}
             </div>
           )}
         </div>

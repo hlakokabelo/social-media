@@ -4,7 +4,7 @@ import { supabase } from "../../config/supabase-client";
 import PostItem from "./PostItem";
 import { useAuth } from "../../context/AuthContext";
 import { formatErrorMessage } from "../../utils/formatErrorMessage";
-import Loading from "../Loading";
+import PostItemSkeleton from "../Skeletons/PostItemSkeleton";
 
 interface IPostListProps {}
 
@@ -98,9 +98,15 @@ const PostList: React.FunctionComponent<IPostListProps> = () => {
 
   const posts: IPost[] | undefined = data?.pages.flat();
 
-  if(isLoading){
-    return <Loading/>
-  }
+ if (isLoading) {
+  return (
+    <div className="md:flex md:flex-col md:items-center">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <PostItemSkeleton key={index} />
+      ))}
+    </div>
+  );
+}
   if (error)
     return (
       <div className="text-center text-red-400">

@@ -1,10 +1,9 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
-import LikeButton from "../postsProperties/LikeButton";
-import CommentSection from "../postsProperties/CommentSection";
+import LikeButton from "../postProperties/LikeButton";
+import CommentSection from "../postProperties/CommentSection";
 import { formatTimeStamp } from "../../utils/formatTimeStamp";
 import { Link, useNavigate } from "react-router";
-import Loading from "../Loading";
 import { FaUser, FaComment } from "react-icons/fa";
 import PostNotFoud from "../../pages/PageNotFound";
 import { routeBuilder, slugify } from "../../utils/routes";
@@ -12,6 +11,7 @@ import { ShareBtn } from "./ShareBtn";
 
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import { fetchPostById, type IPostCommunity } from "../../services/posts";
+import PostDetailSkeleton from "../Skeletons/PostDetailSkeleton";
 
 interface IPostDetailProps {
   postId: number;
@@ -46,8 +46,7 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
     }
   }, [isSuccess, data, slug, postId, navigate]);
 
-  if (isLoading) return <Loading title="Loading post" />;
-
+if (isLoading) return <PostDetailSkeleton />;
   if (error) return <PostNotFoud title="Post" />;
 
   return (
@@ -144,8 +143,7 @@ const PostDetail: React.FunctionComponent<IPostDetailProps> = ({
                 className={
                   data.image_urls.length > 2
                     ? "w-full h-64 object-cover"
-                    : "w-full h-auto max-h-128 object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"
-                }
+                    : "w-full h-auto max-h-128 object-contain bg-black transition-transform duration-300 hover:scale-[1.01]"                }
               />
             </div>
           </PhotoView>

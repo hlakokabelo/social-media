@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../../config/supabase-client";
 import { Link } from "react-router";
 import { formatTimeStamp } from "../../utils/formatTimeStamp";
-import type { IComment } from "../postsProperties/CommentSection";
+import type { IComment } from "../postProperties/CommentSection";
 import type { IPost } from "../posts/PostList";
 import { routeBuilder } from "../../utils/routes";
-import Loading from "../Loading";
+import UserRepliesSkeleton from "../Skeletons/UserRepliesSkeleton";
 
 interface Props {
   userId: string;
@@ -40,8 +40,7 @@ const UserReplies: React.FC<Props> = ({ userId }) => {
     queryFn: () => fetchUserReplies(userId),
   });
 
-  if (isLoading)
-    return <div className="text-zinc-400 mt-4"><Loading/></div>;
+  if (isLoading) return <UserRepliesSkeleton />; 
   if (error) return <p className="text-red-400 mt-4">Error loading replies.</p>;
 
   if (!data?.length)

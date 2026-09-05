@@ -10,7 +10,7 @@ import {
 } from "../services/search";
 import { routeBuilder } from "../utils/routes";
 import { formatTimeStamp } from "../utils/formatTimeStamp";
-import SearchLoading from "../components/skeleton/SearchLoading";
+import SearchLoading from "../components/Skeletons/SearchLoading";
 
 const SearchPage = () => {
   const [searchParams] = useSearchParams();
